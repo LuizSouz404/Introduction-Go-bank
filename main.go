@@ -25,7 +25,7 @@ func (conta *Account) SacarSaldo() {
 	saqueValido := saque < conta.saldo && 0 < saque
 
 	if saqueValido {
-		conta.saldo = conta.saldo - saque
+		conta.saldo -= saque
 
 		fmt.Println("O saldo atual da sua conta R$", conta.saldo)
 	} else {
@@ -42,14 +42,33 @@ func (conta *Account) DepositarSaldo() {
 	valorValido := deposito > 0
 
 	if valorValido {
-		conta.saldo = conta.saldo + deposito
+		conta.saldo += deposito
 
 		fmt.Println("O saldo atual da sua conta R$", conta.saldo)
 	}
 }
 
+func (conta *Account) transferir(destino *Account) {
+	var transferencia float64
+
+	fmt.Println("Quanto deseja transferir em R$")
+	fmt.Scan(&transferencia)
+
+	valorValido := transferencia > 0 && conta.saldo > transferencia
+
+	if valorValido {
+		conta.saldo -= transferencia
+
+		destino.saldo += transferencia
+
+		fmt.Println("O saldo atual da sua conta R$", conta.saldo)
+		fmt.Println("Tranferido R$", transferencia)
+	}
+}
+
 func main() {
 	contaDoLuiz := Account{titular: "Luiz", numeroAgencia: 589, numeroConta: 213465, saldo: 3125.55}
+	contaDaBrunna := Account{titular: "Brunna", numeroAgencia: 589, numeroConta: 213465, saldo: 3125.55}
 
 	fmt.Println(contaDoLuiz)
 
@@ -59,7 +78,7 @@ func main() {
 
 	for {
 		fmt.Println("\nSelecione uma opção")
-		fmt.Println("[1] Vizualizar saldo\n[2] Sacar saldo \n[3] Depositar\n[4] Sair")
+		fmt.Println("[1] Vizualizar saldo\n[2] Sacar saldo \n[3] Depositar\n[4] Transferir\n[0] Sair")
 		var opt int
 
 		fmt.Scan(&opt)
@@ -72,6 +91,9 @@ func main() {
 		case 3:
 			contaDoLuiz.DepositarSaldo()
 		case 4:
+			contaDoLuiz.transferir(&contaDaBrunna)
+			fmt.Println(contaDaBrunna.saldo)
+		case 0:
 			os.Exit(0)
 		default:
 			os.Exit(-1)
